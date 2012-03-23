@@ -1,0 +1,284 @@
+/**
+  *@Author : Akhilesh Godi (CS10B037)
+
+  *Assignment 7 - Tic Tac Toe
+  *CS 2810 - Advanced Programming Lab
+  */
+package cse.iitm.cs10b037.tictactoe;
+
+import java.awt.Color;
+
+
+public class TicTacToeBoard 
+{
+
+    public static int N;		//NEED TO TAKE INPUT FROM USER. Yet to be done!!!
+	private static int[][] gameBoard;	// Number in the array will be  1 if "X", 2 if "O", 0 otherwise
+    public boolean turn;    	// Tells whose turn whether Player 1's turn (true) or Player 2's/Bot's
+    public static int mode;   	// 0 for Player 1 V/S Player 2 ; 1 for Player V/S Computer Easy
+    private BotInterface bot;
+    
+    /**
+	 * Creates an NxN Tic Tac Toe game 
+	 * @param N - Size of the board
+	 */
+    public TicTacToeBoard(int N,int mode) 
+    {
+    	TicTacToeBoard.setN(N);
+        gameBoard = new int[N][N];
+        turn = true;				//TODO : Input from user, if he wants to play second
+        mode = TicTacToeBoard.mode;									
+        
+        if(mode == 1)
+        	bot = new TicTacToeEasy(this);		
+    
+        if(mode == 2)
+        	bot = new TicTacToeMedium(this);
+        
+        if(mode == 3)
+        	bot = new TicTacToeHard(this);
+    }
+    
+   
+    public void makeBotMove()
+    {
+            bot.makeNextMove();
+    }
+    
+    
+    
+    //Marks "X" or "O" ; X is 1 and Y is 2
+    public boolean markXO(int x, int y) 
+    {
+        if (gameBoard[x][y] == 0) 
+        {
+            if (turn) 
+            {
+                gameBoard[x][y] = 1;
+                
+            } 
+            
+            else 
+            {
+                gameBoard[x][y] = 2;
+            }
+            
+            swapTurn();
+            return true;
+        }
+        return false;
+    }
+    
+     // Checks if the board is filled
+    public boolean isFilled()
+    {
+        for (int i = 0; i < getN(); i++)
+        {
+            for (int j = 0; j < getN(); j++)
+            {
+                if (gameBoard[i][j] == 0)
+                    return false;
+            }
+        }
+        return true;
+    }
+    
+    //Returns whose turn it is
+    public boolean getTurn()
+    {
+        return turn;
+    }
+    
+    //Switches turns
+    public void swapTurn()
+    {
+        turn = !turn;
+    }
+    
+    //Prints the board on console. Just for cross checking.
+    public void printBoard() 
+    {
+        for (int i = 0; i < getN(); i++) 
+        {
+            for (int j = 0; j < getN(); j++) 
+            {
+                if (gameBoard[i][j] == 0) 
+                	System.out.print(" 0 "); 
+                else if (gameBoard[i][j] == 1)
+                    System.out.print(" X ");
+                else
+                    System.out.print(" O ");
+            }
+            System.out.print("\n");
+        }
+    }
+    
+    //Makes a copy of the board
+    public int[][] getCopyOfBoard()
+    {
+        int[][] copy = new int[getN()][getN()];
+        for (int i = 0; i < getN(); i++)
+        {
+            for (int j = 0 ; j < getN(); j++){
+                copy[i][j] = gameBoard[i][j];
+            }
+        }
+        return copy;
+    }
+    
+    public int Winner() 
+    {
+        int value = -1;
+        
+        if (diagonalWinner()!=-1)
+        {
+            return diagonalWinner();
+        }
+        
+        if(rowWinner()!=-1)
+        {
+        	return rowWinner();
+        }
+        
+        if(colWinner()!=-1)
+        {
+        	return colWinner();
+        }
+        
+        return value;
+    }
+    
+    //Return True if there is a Winner on the diagonal
+    private int diagonalWinner()
+    {
+    	boolean flag = true;
+    	for(int i = 0 ; i < getN()-1 ; i++)
+    	{
+    		if(gameBoard[i][i]!=gameBoard[i+1][i+1] || gameBoard[i][i]==0 || gameBoard[i+1][i+1]==0)
+    			flag = false;
+    	}
+        
+    	if(flag == true)
+    	{
+    		for(int i = 0; i < getN(); i++ )
+    			TicTacToeWindow.gameButtons[i][i].setBackground(Color.red);
+    		return gameBoard[1][1];
+    	}
+        
+    	flag = true;
+        for(int i = 0 ; i < getN()-1 ; i++)
+    	{
+        	if(gameBoard[i][getN()-i-1] != gameBoard[i+1][getN()-i-2] || gameBoard[i][N-i-1] == 0 || gameBoard[i+1][getN()-i-2] == 0)
+        		flag = false;
+        }
+        if(flag == true)
+        {
+        	for(int i = 0; i < getN(); i++ )
+    			TicTacToeWindow.gameButtons[i][N-i-1].setBackground(Color.red);
+        	
+        	return gameBoard[0][getN()-1];
+        }
+    
+        return -1;
+    }
+    
+    private int rowWinner()
+    {
+    	for(int i = 0; i < getN() ; i++)
+    	{
+    		boolean flag = false;
+    		for(int j = 0 ; j < getN()-1 ; j++)
+    		{
+    			if(gameBoard[i][j]!= gameBoard[i][j+1] || gameBoard[i][j]==0 || gameBoard[i][j+1] == 0)
+    				flag = true;
+    		}
+    		if(flag == false)
+    		{
+    			for(int j = 0; j < getN(); j++ )
+        			TicTacToeWindow.gameButtons[i][j].setBackground(Color.red);	//Didn't think of doing this earlier
+            									//Bad programming! :|
+    			return gameBoard[i][1];
+    		}
+    	}
+		return -1;
+    }
+    
+    private int colWinner()
+    {
+    	for(int i = 0; i < getN() ; i++)
+    	{
+    		boolean flag = false;
+    		for(int j = 0 ; j < getN()-1 ; j++)
+    		{
+    			if(gameBoard[j][i]!= gameBoard[j+1][i] || gameBoard[j][i] == 0 || gameBoard[j+1][i]==0)
+    				flag = true;
+    		}
+    		if(flag == false)
+    		{
+    			for(int j = 0; j < getN(); j++ )
+    					TicTacToeWindow.gameButtons[j][i].setBackground(Color.red);	
+    			//Didn't think of doing this earlier
+    			//Bad programming! :|
+    			
+    			return gameBoard[1][i];
+    		}
+    	}
+		return -1;
+    }
+    
+    //Checks if move is possible
+    public boolean canMove(int x, int y) 
+    {
+        return gameBoard[x][y] == 0;
+    }
+    
+    //Resets the Board
+    public void clearBoard()
+    {
+        for (int i = 0; i < getN(); i++)
+        {
+            for (int j = 0; j < getN(); j++)
+            {
+                gameBoard[i][j] = 0;    
+            }
+        }
+    }
+    
+    public String get(int x, int y)
+    {
+        if (gameBoard[x][y] == 0 )
+        	return " 0 ";
+        
+        else if (gameBoard[x][y] == 1)
+        	return " X ";
+        
+        else return " O ";
+       
+    }
+
+	public static int getN() 
+	{
+		return N;
+	}
+
+	public static void setN(int n) 
+	{
+		N = n;
+	}
+
+	public static void setMode(int n) 
+	{
+		mode = n;
+	}
+ 
+	public int getBotRow()
+	{
+		return bot.getRow();
+	}
+	
+	public int getBotColumn()
+	{
+		return bot.getColumn();
+	}
+
+}

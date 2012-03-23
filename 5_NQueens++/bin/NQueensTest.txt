@@ -1,0 +1,34 @@
+Test: N-Queens++
+================
+
+On a 8x8 chessboard, a queen can attack any piece in the same row,
+column or either diagonal. In the previous assignment, you were required
+to find a single placement of N queens on an NxN chessboard such that
+they can not attack each other.
+
+Now, given the coordinates of K queens, find *all* positions of the
+remaining N-K queens. 
+
+Note 1: This is a test. You are not allowed to look at your previous
+submission, or browse online. If you have any questions regarding Java
+or the assignment, ask your TA.
+
+Note 2: You have been provided some test cases in the tests folder.
+After creating an Eclipse project, create a Java class called "NQueens".
+Copy the test folder and the "run_tests.sh" script into your project
+folder. Now, if you run  "run_tests.sh" from the terminal, it will check
+your program.
+
+Example:
+-------
+Input: 
+> 8
+> 3
+> 3 8 
+> 4 1 
+> 6 7 
+
+Output: 
+> a3 b6 c8 d1 e4 f7 g5 h2 
+> a3 b6 c8 d1 e5 f7 g2 h4 
+> a5 b2 c8 d1 e4 f7 g3 h6 
